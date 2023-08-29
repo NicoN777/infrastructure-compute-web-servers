@@ -22,14 +22,19 @@ variable "number_of_instances" {
   default = 1
 }
 
-variable "vpc_id" {
-  description = "ID of VPC"
-  type = string
+data "terraform_remote_state" "vpc" {
+  backend = "remote"
+
+  config = {
+    organization = "just-boxey-things"
+    workspaces = {
+      name = "aws-network"
+    }
+  }
 }
 
-
 data "aws_vpc" "vpc" {
-  id = var.vpc_id
+  id = data.terraform_remote_state.vpc.outputs.main.id
 }
 
 
